@@ -49,19 +49,24 @@ function menu:select()
   end
 end
 
-function menu:addOption()
+function menu:addOption(text)
+  self.items[#self.items + 1] = {text=text,disabled=false}
+  return #self.items
 end
 
-function menu:removeOption()
+function menu:setOptions(items)
+  checkArg(1, items, "table")
+  self.items = items
 end
 
-function menu:setOptions()
+function menu:enableOption(n)
+  checkArg(1, n, "number")
+  self.items[n].disabled = false
 end
 
-function menu:enableOption()
-end
-
-function menu:disableOption()
+function menu:disableOption(n)
+  checkArg(1, n, "number")
+  self.items[n].disabled = true
 end
 
 local lib = {}

@@ -11,6 +11,9 @@ local function redraw(menu)
   gpu.setForeground(self.fg or 0xFFFFFF)
   gpu.setBackground(self.bg or 0x000000)
   gpu.fill(1, 1, w, h, " ")
+  if menu.title then
+    gpu.set(2, 1, menu.title)
+  end
   for i=1, math.min(h - 4, #menu.items), 1 do
     if menu.selected == i then
       gpu.setForeground(self.bg or self.sfg or 0x000000)
@@ -22,7 +25,7 @@ local function redraw(menu)
     if menu.items[i].disabled then
       gpu.setForeground(0xAAAAAA)
     end
-    gpu.set(2, i, text.padRight(menu.items[i].text:sub(1, w - 4), w - 4))
+    gpu.set(2, i + 2, text.padRight(menu.items[i].text:sub(1, w - 4), w - 4))
   end
 end
 
@@ -44,7 +47,7 @@ function menu:select()
         self.selected = self.selected + 1
       end
     elseif char == 13 and not self.items[self.selected].disabled then -- enter
-      return self.items[self.selected]
+      return self.items[self.selected].text
     end
   end
 end
@@ -73,6 +76,10 @@ local lib = {}
 
 function lib.new(items)
   checkArg(1, items, "table", "nil")
+  items = items or {}
+  for k, v in pairs(items) do
+    items[k] = {text = items[k], disabled = false}
+  end
   return setmetatable({
     items = items or {},
     title = "Menu",
